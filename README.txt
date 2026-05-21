@@ -1,28 +1,79 @@
-IMPORT-STABILITY FIX PACK
+@'
+# MLB Dingers Prediction Model
 
-Use these replacements:
+A Python-based MLB prediction system for pitcher strikeouts, batter outcomes, home run probability, and sportsbook value analysis. The project combines player/team data, matchup context, Monte Carlo-style probability outputs, custom 3x3 pitch-zone adjustments, and FanDuel odds comparison to create daily betting-style reports.
 
-Project root:
-- fetch.py <= fetch.py
-- precompute_everything.py <= precompute_everything.py
+> This project is designed as a personal sports analytics and machine learning portfolio project. It is not financial advice or guaranteed betting guidance.
 
-legacy folder:
-- legacy/fetch.py <= legacy_fetch_import_safe.py
-- legacy/precompute_everything.py <= legacy_precompute_everything_import_safe.py
+---
 
-mlb_model folder:
-- mlb_model/predict_pitcher_ko.py <= predict_pitcher_ko_import_safe.py
-- mlb_model/predict_batter_outcomes.py <= predict_batter_outcomes_import_safe.py
-- mlb_model/shared_game_utils.py <= shared_game_utils_import_safe.py
-- mlb_model/season_backtest.py <= season_backtest_import_safe.py
+## Project Overview
 
-Concrete fixes in this pass:
-1. Added missing _row_eligibility_flag to predict_batter_outcomes.py
-2. Fixed broken BATTER_CAREER / pc_bat references in predict_pitcher_ko.py
-3. Added root fetch.py and precompute_everything.py shims so import fetch / import precompute_everything resolve consistently
-4. Included import-safe legacy fetch / precompute replacements
-5. Cleaned season_backtest.py duplicate imports / __all__
+This model generates daily MLB prediction outputs for:
 
-After replacing files, clear pycache folders and rerun:
-Get-ChildItem -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
-python cli.py
+- Pitcher strikeout probabilities
+- Batter hit and home run probabilities
+- Full matchup and full-slate batter reports
+- FanDuel home run value boards
+- Zone-based 3x3 matchup adjustments
+- Walk-forward calibration and actuals tracking
+
+The system is run through a command-line interface in `cli.py`.
+
+---
+
+## Screenshot Gallery
+
+Add screenshots to the `docs/screenshots/` folder and update the image paths below.
+
+### Main CLI Menu
+
+![Main CLI Menu](docs/screenshots/main_cli_menu.png)
+
+### Batter HR Value Board
+
+![HR Value Board](docs/screenshots/hr_value_board.png)
+
+### Top HR Angles Output
+
+![Top HR Angles](docs/screenshots/top_hr_angles.png)
+
+### Pitcher KO Output
+
+![Pitcher KO Output](docs/screenshots/pitcher_ko_output.png)
+
+---
+
+## Key Features
+
+### 1. Pitcher Strikeout Prediction
+
+The pitcher KO module produces projected strikeout probabilities across multiple thresholds, such as:
+
+- `P(K≥4)`
+- `P(K≥5)`
+- `P(K≥6)`
+- `P(K≥7)`
+- `P(K≥8)`
+
+It also includes calibrated probabilities and recommendation fields such as:
+
+- `anchor_k6`
+- `k5_k6_blend`
+- `tail_k7_k8_blend`
+- `recommended_focus`
+
+---
+
+### 2. Pitcher KO 3x3 Zone Layer
+
+The pitcher KO model includes a 3x3 pitch-zone context layer.
+
+The evidence ladder is:
+
+```text
+exact pitcher rows
+→ pitcher-family rows
+→ pitcher archetype rows
+→ hand matchup rows
+→ league rows
