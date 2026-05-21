@@ -1,0 +1,10 @@
+Save these as:
+- Dingers_hotfix\mlb_model\shared_game_utils.py
+- Dingers_hotfix\mlb_model\predict_batter_outcomes.py
+- Dingers_hotfix\mlb_model\predict_pitcher_ko.py
+
+What changed:
+1. Moved shared game / lineup / roster helpers out of predict_batter_outcomes.py into shared_game_utils.py
+2. predict_pitcher_ko.py now imports shared helpers from shared_game_utils.py instead of importing predict_batter_outcomes.py
+3. predict_batter_outcomes.py now imports the shared helpers too, so shared logic lives in one place
+4. This removes the direct KO -> batter import edge that caused the circular import at startup

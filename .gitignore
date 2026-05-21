@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local/environment files
+.env
+.env.*
+*.log
+
+# Generated model caches
+cache/
+*.pkl
+*.joblib
+*.parquet
+
+# Generated outputs
+outputs/
+reports/
+backtests/
+
+# Daily/manual betting odds
+FDodds.csv
+FDOdds.csv
+fdodds.csv
+
+# Keep templates/docs instead
+!FDodds.example.csv
+!docs/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Backup / patch artifacts
+*.bak
+*.bak_*
+*.bak*
+*.tmp

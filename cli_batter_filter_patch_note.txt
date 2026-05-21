@@ -1,0 +1,12 @@
+Run this from the Dingers_hotfix folder:
+
+python patch_cli_batter_filters.py
+
+What it changes in cli.py:
+1. Adds _eligible_cli_batter_mask(...)
+2. Adds _filtered_cli_batter_board(...)
+3. Replaces compact_batters_terminal(...) so the on-screen top hit/HR angles exclude ineligible rows
+4. Replaces the direct top_hr/top_hits CSV writer block so the saved top files also exclude ineligible rows
+
+Why this is needed:
+cli.py is still bypassing the stricter reporting/terminal logic and directly sorting raw batter-slate rows.

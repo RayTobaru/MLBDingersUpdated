@@ -1,0 +1,20 @@
+Save these files as:
+- Dingers_hotfix\mlb_model\predict_batter_outcomes.py
+- Dingers_hotfix\mlb_model\reporting.py
+- Dingers_hotfix\mlb_model\markov_game_context.py
+
+What this pass changes:
+1. Stricter batter row eligibility with eligible_for_top_boards
+2. Harder report filtering: excludes non-eligible, projected, TBD-opponent rows
+3. One more HR multiplier decompression pass
+4. Markov-chain lineup context module feeding team runs / slot PA / HR-R-RBI context columns
+
+New batter-side columns:
+- eligible_for_top_boards
+- markov_team_exp_runs
+- markov_slot_exp_pa
+- markov_team_env_mult
+- markov_run_context_mult
+- markov_rbi_context_mult
+- markov_hr_context_mult
+- exp_hr_ctx
