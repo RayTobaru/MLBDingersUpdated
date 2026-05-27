@@ -28,11 +28,11 @@ Add screenshots to the `docs/screenshots/` folder and update the image paths bel
 
 ### Main CLI Menu
 
-![Main CLI Menu](docs/screenshots/main_cli_menu.png)
+
 
 ### Batter HR Value Board
 
-![HR Value Board](docs/screenshots/hr_value_board.png)
+![HR Value Board]()
 
 ### Top HR Angles Output
 
