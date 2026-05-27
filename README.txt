@@ -95,6 +95,7 @@ Example output fields include:
 - `zone_pitch_league_rows`
 
 This makes the strikeout model more transparent by showing whether a matchup adjustment came from exact pitcher evidence, pitcher archetype fallback, hand matchup fallback, or league-level fallback.
+![Alt text] (data/KOoutput table.png)
 
 ---
 
