@@ -40,8 +40,6 @@ The screenshots below are stored in the repository's `data/` folder.
 
 ### FanDuel HR Value Board
 
-![FanDuel HR Value Board](data/hrvalue.png)
-
 ---
 
 ## Key Features
