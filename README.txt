@@ -1,30 +1,24 @@
 # MLB Dingers Prediction Model
 
-A Python-based MLB prediction system for pitcher strikeouts, batter outcomes, home run probability, and sportsbook value analysis. The project combines player/team data, matchup context, Monte Carlo-style probability outputs, custom pitch-zone adjustments, probability calibration, and FanDuel odds comparison to create daily MLB prediction reports.
+This project is an MLB analytics and prediction engine designed to estimate pitcher strikeouts, batter outcomes, home run probability, and home run value opportunities using player data, matchup context, probability calibration, and sportsbook odds comparison. It includes command-line tools for daily slate generation, pitcher KO reports, batter outcome reports, FanDuel HR value boards, and calibration tracking.
 
-> This project is a personal sports analytics and machine learning portfolio project. It is not financial advice, betting advice, or guaranteed betting guidance.
+This project is intended as a personal sports analytics and machine learning portfolio project. It is not financial advice, betting advice, or guaranteed betting guidance.
 
----
+## Features
 
-## Project Overview
-
-The model generates daily MLB outputs for:
-
-- Pitcher strikeout probabilities
-- Batter hit and home run probabilities
-- Full matchup and full-slate reports
-- FanDuel home run value boards
-- Zone-based 3x3 matchup adjustments
-- Probability calibration using saved predictions and actual results
-- Walk-forward calibration and actuals tracking
-
-The system is mainly operated through the command-line interface in `cli.py`.
-
----
+- Predicts pitcher strikeout probabilities across multiple thresholds, including `P(K≥4)` through `P(K≥8)`
+- Generates calibrated strikeout probabilities such as `P_cal(K≥5)` and `P_cal(K≥6)`
+- Projects batter hit and home run probabilities for individual matchups and full daily slates
+- Uses calibrated batter probabilities such as `P_cal(H>=1)` and `P_cal(HR>=1)`
+- Includes custom 3x3 pitch-zone and HR contact-damage matchup layers
+- Builds FanDuel HR value boards using manually updated odds from `FDodds.csv`
+- Creates fair odds, implied probability, expected value, edge percentage, and value tags
+- Supports 10-day and 90-day actuals tracking for model calibration
+- Provides full-slate CLI outputs for KO, top HR angles, top hit angles, and value boards
 
 ## Screenshot Gallery
 
-The screenshots below are stored in the repository's `data/` folder.
+The screenshots below are stored in the repository’s `data/` folder.
 
 ### Main CLI Menu
 
@@ -40,185 +34,47 @@ The screenshots below are stored in the repository's `data/` folder.
 
 ### FanDuel HR Value Board
 
----
+![FanDuel HR Value Board](data/hrvalue.png)
 
-## Key Features
-
-### 1. Pitcher Strikeout Prediction
-
-The pitcher KO module produces projected strikeout probabilities across multiple thresholds:
-
-- `P(K≥4)`
-- `P(K≥5)`
-- `P(K≥6)`
-- `P(K≥7)`
-- `P(K≥8)`
-
-It also includes calibrated strikeout probabilities and recommendation fields such as:
-
-- `P_cal(K≥4)` through `P_cal(K≥8)`
-- `anchor_k6`
-- `k5_k6_blend`
-- `tail_k7_k8_blend`
-- `recommended_focus`
-
-These outputs help separate safer strikeout anchors from higher-upside tail outcomes.
-
----
-
-### 2. Pitcher KO 3x3 Zone Layer
-
-The pitcher KO model includes a 3x3 pitch-zone context layer designed to improve matchup-specific strikeout projections.
-
-The evidence ladder is:
+## Code Structure
 
 ```text
-exact pitcher rows
-→ pitcher-family rows
-→ pitcher archetype rows
-→ hand matchup rows
-→ league rows
-```
-
-This allows the model to still produce context-aware outputs when exact pitcher data is limited.
-
-Example diagnostic columns include:
-
-- `zone_pitch_k_mult`
-- `zone_pitch_confidence`
-- `zone_pitch_pitcher_arch`
-- `zone_pitch_candidate_source`
-- `zone_pitch_sample_regime`
-- `zone_pitch_exact_pitcher_rows`
-- `zone_pitch_pitcher_archetype_rows`
-- `zone_pitch_hand_rows`
-- `zone_pitch_league_rows`
-
----
-
-### 3. Batter Outcome Prediction
-
-The batter module projects several offensive outcomes, including:
-
-- Hit probability
-- Home run probability
-- Expected hits
-- Expected home runs
-- Singles, doubles, triples, and total hit context
-- Batting order and lineup role effects
-
-Important output columns include:
-
-- `P(H>=1)`
-- `P_cal(H>=1)`
-- `P(HR>=1)`
-- `P_cal(HR>=1)`
-- `exp_hits`
-- `exp_hr`
-- `hit_pa`
-- `hr_pa`
-
-The raw probabilities are preserved while calibrated probabilities are added for better comparison against actual outcomes.
-
----
-
-### 4. Batter HR 3x3 Zone Layer
-
-The HR model includes a batter-side 3x3 context system that estimates contact and damage quality against the opposing pitcher profile.
-
-The HR evidence ladder is:
-
-```text
-exact batter vs pitcher-family/zone
-→ batter-family profile
-→ batter archetype
-→ pitcher archetype
-→ hand matchup
-→ league rows
-```
-
-Example HR context columns include:
-
-- `zone_hr_overall_mult`
-- `zone_hr_contact_mult`
-- `zone_hr_damage_mult`
-- `zone_hr_barrel_mult`
-- `zone_hr_air_mult`
-- `zone_hr_pull_air_mult`
-- `zone_hr_confidence`
-- `zone_hr_candidate_source`
-- `zone_hr_sample_regime`
-- `zone_hr_batter_archetype`
-- `zone_hr_pitcher_arch`
-
----
-
-### 5. Probability Calibration
-
-The model includes a probability calibration layer that compares saved model predictions against actual outcomes.
-
-The calibration workflow can build 10-day and 90-day actuals files and create probability calibration maps for:
-
-- Hits
-- Home runs
-
-The calibrated outputs are saved alongside raw probabilities:
-
-```text
-P(H>=1)          raw hit probability
-P_cal(H>=1)      calibrated hit probability
-
-P(HR>=1)         raw HR probability
-P_cal(HR>=1)     calibrated HR probability
-```
-
-The system also supports blended calibration so the output does not collapse all players into the same bucket. This helps preserve model ranking while correcting probability bias.
-
----
-
-### 6. FanDuel HR Value Board
-
-The value board reads a manually maintained `FDodds.csv` file and compares model HR probability against market-implied probability.
-
-It can output:
-
-- Raw HR probability
-- Calibrated HR probability
-- FanDuel odds
-- FanDuel implied probability
-- Fair American odds
-- Edge percentage points
-- Expected value per $100
-- Value tag
-
-Important columns include:
-
-- `P(HR>=1)`
-- `P_cal(HR>=1)`
-- `model_prob_hr`
-- `model_prob_source`
-- `fd_odds`
-- `fd_implied_prob`
-- `fair_odds_american`
-- `edge_pct_pts`
-- `ev_per_100`
-- `value_tag`
-
-When calibrated probability is available, the value board uses `P_cal(HR>=1)` as the preferred probability source.
-
----
-
-## CLI Menu
-
-The main workflow is run through:
-
-```bash
+Dingers_hotfix/
+├── cli.py                         # Main command-line interface
+├── FDodds.csv                     # Manually updated FanDuel HR odds file
+├── requirements.txt               # Python dependencies
+├── data/
+│   ├── Cliimage.png               # CLI menu screenshot
+│   ├── HRboard.png                # Top HR angles screenshot
+│   ├── KOoutput table.png         # Pitcher KO output screenshot
+│   ├── hrvalue.png                # FanDuel HR value board screenshot
+│   └── team_defense_proxies.csv   # Team defense proxy data
+├── mlb_model/
+│   ├── predict_pitcher_ko.py      # Pitcher strikeout prediction logic
+│   ├── predict_batter_outcomes.py # Batter hit and HR prediction logic
+│   ├── zone_pitch_features.py     # Pitcher KO 3x3 zone features
+│   ├── zone_hr_features.py        # Batter HR 3x3 zone features
+│   ├── prob_calibration.py        # Probability calibration maps and application
+│   ├── fd_value.py                # FanDuel HR value-board logic
+│   └── reporting.py               # Prediction report generation
+├── outputs/                       # Generated prediction reports and CSV outputs
+├── cache/                         # Cached data and precomputed files
+└── README.md                      # Project overview and documentation
+How to Run
+Clone this repository:
+git clone https://github.com/yourusername/mlb-dingers-prediction-model.git
+cd mlb-dingers-prediction-model
+Create and activate a virtual environment:
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+Install dependencies:
+pip install -r requirements.txt
+Launch the CLI:
 python cli.py
-```
+CLI Menu
 
-Current menu options include:
+The project is operated through the command-line menu in cli.py:
 
-```text
 1) Build / refresh precompute caches
 2) Refresh auto defense proxies only
 3) Pitcher KO output for one matchup
@@ -234,67 +90,10 @@ Current menu options include:
 13) FanDuel HR value board
 14) Build/update probability calibration maps
 0) Exit
-```
+Example Outputs
 
----
+The model produces daily outputs such as:
 
-## Typical Daily Workflow
-
-A standard daily run usually follows this order:
-
-```text
-1. Activate the virtual environment
-2. Update FDodds.csv if using FanDuel HR value comparison
-3. Run option 1 if caches need to be refreshed
-4. Run option 6 for the full slate
-5. Review batter, KO, and HR value outputs in the outputs/ folder
-```
-
-Activate the virtual environment in PowerShell:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-Then run:
-
-```powershell
-python cli.py
-```
-
----
-
-## Calibration Workflow
-
-To update actuals and probability calibration maps:
-
-```text
-14) Build/update probability calibration maps
-```
-
-Recommended windows:
-
-```text
-10,90
-```
-
-This generates calibration maps under:
-
-```text
-outputs/calibration/
-```
-
-The latest maps are used automatically by future batter outputs.
-
----
-
-## Output Files
-
-Common outputs are written to the `outputs/` folder.
-
-Examples:
-
-```text
 outputs/ko_YYYY-MM-DD_TEAM_TEAM.csv
 outputs/ko_slate_YYYY-MM-DD.csv
 outputs/batters_YYYY-MM-DD_TEAM_TEAM.csv
@@ -303,68 +102,182 @@ outputs/batters_slate_YYYY-MM-DD_top_hr.csv
 outputs/batters_slate_YYYY-MM-DD_top_hits.csv
 outputs/batters_slate_YYYY-MM-DD_hr_values.csv
 outputs/calibration/
-```
+Pitcher Strikeout Model
 
----
+The pitcher KO model projects strikeout probabilities across several thresholds:
 
-## Project Structure
+P(K≥4)
+P(K≥5)
+P(K≥6)
+P(K≥7)
+P(K≥8)
 
-```text
-Dingers_hotfix/
-├── cli.py
-├── FDodds.csv
-├── data/
-│   ├── Cliimage.png
-│   ├── HRboard.png
-│   ├── KOoutput table.png
-│   ├── hrvalue.png
-│   └── team_defense_proxies.csv
-├── mlb_model/
-│   ├── predict_pitcher_ko.py
-│   ├── predict_batter_outcomes.py
-│   ├── prob_calibration.py
-│   ├── fd_value.py
-│   ├── reporting.py
-│   ├── zone_pitch_features.py
-│   └── zone_hr_features.py
-├── outputs/
-├── cache/
-└── README.md
-```
+It also outputs calibrated probabilities and ranking fields:
 
----
+P_cal(K≥4) through P_cal(K≥8)
+anchor_k6
+k5_k6_blend
+tail_k7_k8_blend
+recommended_focus
 
-## Requirements
+These fields are used to identify safer strikeout anchors, balanced targets, and higher-upside tail outcomes.
 
-This project uses Python and common data science libraries such as:
+Pitcher KO 3x3 Zone Layer
 
-- pandas
-- numpy
-- scipy
-- scikit-learn
-- joblib
-- pybaseball or related MLB data utilities, depending on local setup
+The pitcher KO model includes a 3x3 pitch-zone adjustment layer. The evidence ladder is:
 
-Install dependencies from your project environment as needed.
+exact pitcher rows
+→ pitcher-family rows
+→ pitcher archetype rows
+→ hand matchup rows
+→ league rows
 
-Example:
+This allows the system to create matchup-aware strikeout adjustments even when exact pitcher sample size is limited.
 
-```powershell
-python -m pip install -r requirements.txt
-```
+Important diagnostic columns include:
 
----
+zone_pitch_k_mult
+zone_pitch_confidence
+zone_pitch_pitcher_arch
+zone_pitch_candidate_source
+zone_pitch_sample_regime
+zone_pitch_exact_pitcher_rows
+zone_pitch_pitcher_archetype_rows
+zone_pitch_hand_rows
+zone_pitch_league_rows
+Batter Outcome Model
 
-## Notes and Limitations
+The batter model projects:
 
-- The model depends on the quality of lineup, roster, pitcher, and market data.
-- Early-season samples can be noisy, so calibration and shrinkage are important.
-- FanDuel odds are manually maintained through `FDodds.csv`.
-- Outputs are analytical estimates and should not be treated as guaranteed results.
-- The model is built for portfolio, research, and educational sports analytics purposes.
+Hit probability
+Home run probability
+Expected hits
+Expected home runs
+Singles, doubles, triples, and HR context
+Lineup position and expected plate appearance context
 
----
+Important output columns include:
 
-## Disclaimer
+P(H>=1)
+P_cal(H>=1)
+P(HR>=1)
+P_cal(HR>=1)
+exp_hits
+exp_hr
+hit_pa
+hr_pa
 
-This project is for educational and portfolio use only. It does not guarantee betting results and should not be interpreted as financial advice or a recommendation to gamble.
+The raw probabilities are preserved while calibrated probabilities are added for better comparison against historical outcomes.
+
+Batter HR 3x3 Zone Layer
+
+The HR model includes a batter-side 3x3 contact and damage layer. The evidence ladder is:
+
+exact batter vs pitcher-family/zone
+→ batter-family profile
+→ batter archetype
+→ pitcher archetype
+→ hand matchup
+→ league rows
+
+Important HR context columns include:
+
+zone_hr_overall_mult
+zone_hr_contact_mult
+zone_hr_damage_mult
+zone_hr_barrel_mult
+zone_hr_air_mult
+zone_hr_pull_air_mult
+zone_hr_confidence
+zone_hr_candidate_source
+zone_hr_sample_regime
+zone_hr_batter_archetype
+zone_hr_pitcher_arch
+FanDuel HR Value Board
+
+The value-board module reads a manually maintained FDodds.csv file and compares the model’s calibrated HR probability against market-implied probability.
+
+The board can output:
+
+Raw HR probability
+Calibrated HR probability
+FanDuel odds
+FanDuel implied probability
+Fair American odds
+Edge percentage points
+Expected value per $100
+Value tag
+
+Important columns include:
+
+P(HR>=1)
+P_cal(HR>=1)
+model_prob_hr
+model_prob_source
+fd_odds
+fd_implied_prob
+fair_odds_american
+edge_pct_pts
+ev_per_100
+value_tag
+
+When calibrated HR probability is available, the value board uses P_cal(HR>=1) as the preferred model probability.
+
+Calibration Workflow
+
+The model supports 10-day and 90-day actuals tracking for calibration. This allows the system to compare saved predictions against actual outcomes and create calibration maps.
+
+To update probability calibration maps, use:
+
+14) Build/update probability calibration maps
+
+Recommended calibration windows:
+
+10,90
+
+Calibration outputs are stored in:
+
+outputs/calibration/
+Typical Daily Workflow
+
+A typical daily workflow is:
+
+1. Activate the virtual environment
+2. Update FDodds.csv if using FanDuel HR value comparison
+3. Run option 1 if caches need to be refreshed
+4. Run option 6 for the full slate
+5. Review KO outputs, batter outputs, top HR boards, and HR value boards
+
+PowerShell activation command:
+
+.\.venv\Scripts\Activate.ps1
+
+Then run:
+
+python cli.py
+Requirements
+
+This project uses Python and common data science libraries, including:
+
+pandas
+numpy
+scipy
+scikit-learn
+joblib
+pybaseball or related MLB data utilities, depending on local setup
+
+Install dependencies with:
+
+pip install -r requirements.txt
+Notes
+The model depends on the quality of lineup, roster, pitcher, and market data.
+Early-season samples can be noisy, so calibration and shrinkage are important.
+FanDuel odds are manually maintained through FDodds.csv.
+Outputs are analytical estimates and should not be treated as guaranteed results.
+This project was built as a sports analytics, machine learning, and data engineering portfolio project.
+License
+
+This project is intended for educational and non-commercial purposes only.
+
+
+One important thing: when you paste this into GitHub browser, paste it directly into the README editor. Do **not** w
